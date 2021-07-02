@@ -143,18 +143,33 @@ access :   public
 params :  id
 methods:  get
 */
-
-
 booky.get("/p/:id",(req, res)=>{
    const getPublication=database.publication.filter((publication)=>publication.Id=== parseInt(req.params.id));
- 
-
-   if(getPublication.length===0)
+  if(getPublication.length===0)
    {
        return res.json({error:`no pub found ${req.params.id}`})
    };
 
     return res.json({publications : getPublication});
 });
+
+
+/*
+Route:     /p/book
+Descrip: all pub base on book
+access :   public
+params :  isbn
+methods:  get
+*/
+
+booky.get("/p/books/:isbn",(req, res)=>{
+    const getPublication=database.publication.filter((publication)=>publication.books.includes(req.params.isbn));
+   
+    if (getPublication.length===0){
+        return res.json({error:`no author found ${req.params.isbn}`});
+    };
+   
+    return res.json({books:getPublication});
+   });
 
 booky.listen(5500, ()=>console.log("server is running"));
