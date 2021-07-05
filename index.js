@@ -1,11 +1,29 @@
+require("dotenv").config();
+
 const express = require("express");
 
 //database
 const database= require("./database");
 
+const mongoose= require("mongoose");
+
+
 //intitalization
 const booky = express();
 booky.use(express.json());
+
+
+mongoose.connect(process.env.MONGO_URL,{
+    useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useFindAndModify: false,
+  useCreateIndex: true
+}).then(()=>console.log("hey its running"));
+
+
+
+
+
 
 //////GET/////
 
@@ -289,11 +307,64 @@ database.books.forEach((book)=>
         book.publication=req.body.pubId;
         return;
     }
-    
-});return res.json({books:database.books, pub:database.publication})
 });
 
+return res.json({books:database.books, pub:database.publication})
+});
 
+//////delete///////
+
+/*
+Route:     /book/delete
+Descrip:   delete a book 
+access :   public
+params :  isbn
+methods:  delete
+*/
+booky.delete("/book/delete/:isbn",(req,res)=>{
+
+    const updatedBookDatabase = database.books.filter((book)=>{
+        book.ISBN !== req.params.isbn
+
+      
+    });
+    database.books = updatedBookDatabase;
+    return res.json({book:database.books});
+});
+
+/*
+Route:     /author/delete
+Descrip:   delete a author 
+access :   public
+params :  isbn
+methods:  delete
+*/
+booky.delete("/author/delete/:isbn/:authorId",(req,res)=>{
+
+     database.books.forEach((book)=>{
+         if(book.ISBN===req.params.isbn){
+             const newAuthorList =database.author.filter
+             ((authors)=> author!==parseInt(req.params.authorId) )
+            }
+            database.author= newAuthorList;
+            return;
+         });
+
+         database.author.forEach((authors)=>
+         {
+             if (authors.id==parseInt(req.params.authorId)){
+                    const newBookList=  authors.books.filter((book)=> book==req.params.isbn
+                
+                    )
+                    author.book= newBookList;
+                    return;
+
+             }
+           
+         });
+         return res.json({books:database.books,authors:database.author})
+
+});
 
 
 
